@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subir al Sur | Voluntariado Intercultural</title>
+    
+    <!-- Google Fonts Integration -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* =========================================
+           01. Variables & Global Reset
+           ========================================= */
+        :root {
+            --sas-orange: #f26522; 
+            --sas-blue: #005da4;
+            --sas-green: #8cc63f; 
+            --sas-pink: #f23c6a; 
+            --sas-yellow: #fca311; 
+            --sas-lightblue: #009bdf; 
+            --dark-bg: #0a0a0a; 
+            --light-bg: #f4f4f4;
+            --text-dark: #1a1a1a;
+            --font-display: 'Montserrat', sans-serif;
+            --font-body: 'Open Sans', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-body); background-color: var(--light-bg); color: var(--text-dark); overflow-x: hidden; cursor: none; }
+
+        /* =========================================
+           02. Custom Cursor
+           ========================================= */
+        .cursor {
+            width: 30px; height: 30px; border: 2px solid white; background-color: transparent; border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background-color 0.3s; mix-blend-mode: difference;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .cursor i { color: white; font-size: 14px; transform: rotate(180deg); transition: font-size 0.3s, color 0.3s; }
+        .cursor.hovered { width: 60px; height: 60px; background-color: white; }
+        .cursor.hovered i { font-size: 30px; color: black; }
+
+        /* =========================================
+           03. Animation Utilities
+           ========================================= */
+        /* Intersection Observer Blur Reveal */
+        .blur-reveal { opacity: 0; filter: blur(15px); transform: translateY(30px); transition: opacity 1s ease, filter 1s ease, transform 1s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .blur-reveal.revealed { opacity: 1; filter: blur(0); transform: translateY(0); }
+
+        /* Section Background Text Watermarks */
+        .section-watermark { position: absolute; top: 2%; left: 0; width: 100%; text-align: center; font-family: var(--font-display); font-size: 10vw; font-weight: 900; white-space: nowrap; pointer-events: none; z-index: 0; user-select: none; }
+        .watermark-history { color: var(--sas-blue); opacity: 0.1; }
+        .watermark-programs { color: var(--sas-pink); opacity: 0.08; }
+        .watermark-projects { color: var(--sas-orange); opacity: 0.1; }
+
+        /* =========================================
+           04. Floating Action Buttons (Right Sidebar)
+           ========================================= */
+        .floating-sidebar { position: fixed; right: 0; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 15px; z-index: 1001; padding-right: 20px; }
+        .floating-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--dark-bg); color: white; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.3s, background 0.3s; cursor: none; }
+        .floating-btn:hover { transform: scale(1.15) translateX(-5px); background: var(--sas-orange); }
+        .floating-lang { background: var(--sas-blue); font-family: var(--font-display); font-weight: 700; font-size: 0.9rem; }
+        .floating-lang:hover { background: var(--sas-pink); }
+
+        /* =========================================
+           05. Header & Main Logo
+           ========================================= */
+        #main-header { position: fixed; top: 0; left: 0; width: 100%; height: 90px; z-index: 1005; pointer-events: none; transition: background 0.4s, backdrop-filter 0.4s; }
+        body.scrolled-nav #main-header { background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(10px); }
+        .header-logo-link { position: absolute; top: 1.5rem; right: 5vw; pointer-events: auto; transition: all 0.8s cubic-bezier(0.25, 1, 0.3, 1); }
+        .header-logo { height: 55px; transition: transform 0.3s ease; }
+        .header-logo-link:hover .header-logo { transform: scale(1.05); }
+        /* Centers logo when scrolling */
+        body.scrolled-nav .header-logo-link { right: 50%; transform: translateX(50%); }
+
+        /* =========================================
+           06. Dynamic Navigation Components
+           ========================================= */
+        .nav-text-btn {
+            position: fixed; z-index: 1000; width: 110px; height: 40px; border-radius: 20px;
+            color: white; text-decoration: none; font-family: var(--font-display); font-weight: 700; font-size: 0.75rem; text-transform: uppercase;
+            display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: top 0.6s cubic-bezier(0.25, 1, 0.3, 1), left 0.6s cubic-bezier(0.25, 1, 0.3, 1), transform 0.6s cubic-bezier(0.25, 1, 0.3, 1);
+        }
+        .nav-text-btn span { display: inline-block; transition: transform 0.3s ease; }
+        .nav-text-btn:hover span { transform: scale(1.15); }
+
+        /* Navigation Color Assignments */
+        .btn-inicio { background-color: var(--sas-blue); }
+        .btn-historia { background-color: var(--sas-orange); }
+        .btn-programas { background-color: var(--sas-pink); }
+        .btn-iniciativas { background-color: var(--sas-green); }
+        .btn-faq { background-color: var(--sas-yellow); color: var(--dark-bg); } 
+        .btn-contacto { background-color: var(--sas-lightblue); }
+
+        /* Nav Initial State (Horizontal Center-Top) */
+        .btn-inicio { top: 2rem; left: calc(50% - 300px); transform: rotate(0deg); transition-delay: 0.5s; }
+        .btn-historia { top: 2rem; left: calc(50% - 180px); transform: rotate(0deg); transition-delay: 0.4s; }
+        .btn-programas { top: 2rem; left: calc(50% - 60px); transform: rotate(0deg); transition-delay: 0.3s; }
+        .btn-iniciativas { top: 2rem; left: calc(50% + 60px); transform: rotate(0deg); transition-delay: 0.2s; }
+        .btn-faq { top: 2rem; left: calc(50% + 180px); transform: rotate(0deg); transition-delay: 0.1s; }
+        .btn-contacto { top: 2rem; left: calc(50% + 300px); transform: rotate(0deg); transition-delay: 0s; }
+
+        /* Nav Scrolled State (Vertical Left-Edge Stack) */
+        body.scrolled-nav .btn-inicio { top: calc(50% - 300px); left: -25px; transform: rotate(-90deg); transition-delay: 0s; }
+        body.scrolled-nav .btn-historia { top: calc(50% - 180px); left: -25px; transform: rotate(-90deg); transition-delay: 0.1s; }
+        body.scrolled-nav .btn-programas { top: calc(50% - 60px); left: -25px; transform: rotate(-90deg); transition-delay: 0.2s; }
+        body.scrolled-nav .btn-iniciativas { top: calc(50% + 60px); left: -25px; transform: rotate(-90deg); transition-delay: 0.3s; }
+        body.scrolled-nav .btn-faq { top: calc(50% + 180px); left: -25px; transform: rotate(-90deg); transition-delay: 0.4s; }
+        body.scrolled-nav .btn-contacto { top: calc(50% + 300px); left: -25px; transform: rotate(-90deg); transition-delay: 0.5s; }
+
+        /* =========================================
+           07. Hero Section
+           ========================================= */
+        .hero {
+            height: 100vh; display: flex; flex-direction: column; justify-content: center;
+            padding: 0 5vw; position: relative; overflow: hidden; background-color: var(--dark-bg); color: white; 
+        }
+        .hero-dynamic-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 0; pointer-events: none; }
+        .floating-word { position: absolute; font-family: var(--font-display); font-weight: 900; color: rgba(255,255,255,1); opacity: 0; transition: opacity 2s ease-in-out; white-space: nowrap; }
+        .hero-content { position: relative; z-index: 2; width: 100%; }
+        
+        .typewriter-container { font-family: var(--font-display); font-size: clamp(2rem, 4.5vw, 4.5rem); font-weight: 900; line-height: 1.15; margin-bottom: 2.5rem; min-height: 140px; max-width: 100%; }
+        .cursor-blink { font-weight: 400; color: var(--sas-green); animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        
+        .hero-concept { display: flex; gap: 4rem; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 2.5rem; }
+        .hero-concept div { flex: 1; }
+        
+        /* Hero Subtitle Styling */
+        .hero-concept h2 { font-size: 2.2rem; color: var(--sas-blue); margin-bottom: 1rem; line-height: 1.2; font-weight: 700; }
+        .hero-concept p { font-size: 1.1rem; opacity: 0.8; line-height: 1.8; }
+        .hero-concept strong { color: var(--sas-green); font-weight: 600; }
+
+        /* =========================================
+           08. History Section & Image Reveals
+           ========================================= */
+        .history-section { padding: 8rem 5vw 8rem 8vw; background-color: var(--light-bg); position: relative; overflow: hidden;}
+        .history-block { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; min-height: 50vh; margin-bottom: 8rem; position: relative; z-index: 2; align-items: center; }
+        .history-text { display: flex; flex-direction: column; justify-content: center; z-index: 2; margin-top: 4rem;}
+        .history-text p { font-size: 1.2rem; line-height: 1.8; margin-bottom: 1rem; color: #444; }
+        
+        /* Split Title Wrapper Setup */
+        .box-container { position: relative; width: 100%; height: 100%; min-height: 400px; margin-top: 2rem; }
+        .box-title { position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%); font-family: var(--font-display); font-size: 2.5rem; font-weight: 900; white-space: nowrap; margin: 0; z-index: 10; pointer-events: none; text-align: center; }
+        .title-outside { color: var(--box-color); clip-path: inset(0 0 50% 0); } 
+        .title-inside { color: white; clip-path: inset(50% 0 0 0); } 
+        
+        /* Image Reveal Component */
+        .color-reveal-wrapper { width: 100%; height: 100%; position: absolute; top: 0; left: 0; border-radius: 20px; display: flex; justify-content: center; align-items: center; overflow: hidden; transition: box-shadow 0.5s ease; background-color: var(--box-color); }
+        .color-reveal-icon { font-size: 10rem; color: rgba(255,255,255,0.2); transition: opacity 0.5s ease, transform 0.5s; z-index: 1; }
+        .color-reveal-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center 25%; opacity: 0; filter: grayscale(50%); transform: scale(1.1); transition: opacity 0.6s ease, transform 0.6s ease, filter 0.6s ease; z-index: 2; }
+        
+        .box-container:hover .color-reveal-icon { opacity: 0; transform: scale(0.5); }
+        .box-container:hover .color-reveal-img { opacity: 1; transform: scale(1); filter: grayscale(0%); }
+        .history-block:nth-child(even) .history-text { order: 2; }
+        .history-block:nth-child(even) .box-container { order: 1; }
+        
+        /* Mission Text Banner */
+        .mission-banner { 
+            background-color: var(--box-color); color: white; padding: 6rem 5vw; border-radius: 30px; text-align: center; margin-top: 4rem; position: relative; 
+            transform: scale(0.8); opacity: 0; transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 1s, box-shadow 1s; 
+        }
+        .mission-banner.zoomed-in { transform: scale(1); opacity: 1; box-shadow: 0 0 20px rgba(0,93,164,0.6), 0 0 50px rgba(0,93,164,0.4); }
+        .mission-typewriter-container { font-size: 1.8rem; font-family: var(--font-display); font-weight: 700; line-height: 1.5; max-width: 1000px; margin: 0 auto; min-height: 200px; }
+        
+        /* =========================================
+           09. Programs Section
+           ========================================= */
+        .programs-section { padding: 8rem 5vw 5rem 8vw; background: var(--dark-bg); color: white; position: relative; overflow: hidden;}
+        .programs-container { display: flex; flex-direction: column; gap: 4rem; position: relative; z-index: 2; }
+        .program-card { display: grid; grid-template-columns: 1.2fr 1fr; background: #151515; border-radius: 30px; border: 1px solid #333; transition: border-color 0.5s ease; gap: 2rem; padding: 2rem; }
+        .program-card.reverse { grid-template-columns: 1fr 1.2fr; }
+        .program-card.reverse .program-content { order: 2; }
+        .program-card.reverse .box-container { order: 1; }
+        .program-content { padding: 3rem; }
+        .program-content p { font-size: 1.1rem; line-height: 1.8; color: #ccc; margin-bottom: 2rem; }
+        .benefits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+        .benefits-grid div { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 0.9rem;}
+        .benefits-grid i { color: var(--sas-green); }
+        .alert-modern { padding: 1.5rem; font-size: 0.95rem; line-height: 1.6; border-radius: 8px;}
+        
+        /* =========================================
+           10. Projects / Initiatives (Bento Grid)
+           ========================================= */
+        .projects-section { padding: 8rem 5vw 8rem 8vw; background: var(--light-bg); position: relative; overflow: hidden;}
+        .bento-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 250px; gap: 1.5rem; margin-top: 3rem; position: relative; z-index: 2;}
+        .bento-item { border-radius: 20px; position: relative; overflow: hidden; display: flex; align-items: flex-end; padding: 2rem; cursor: none; opacity: 0; transform: translateY(50px); transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.4s ease; background-color: var(--box-color); }
+        .bento-item.visible { opacity: 1; transform: translateY(0); }
+        .bento-item:hover { box-shadow: 0 0 20px var(--box-color), 0 0 40px var(--box-color); z-index: 10;}
+        
+        .bento-item:nth-child(1) { grid-column: span 2; grid-row: span 2; --box-color: var(--sas-orange); color: white;}
+        .bento-item:nth-child(2) { grid-column: span 2; --box-color: var(--sas-pink); color: white;}
+        .bento-item:nth-child(3) { grid-column: span 1; --box-color: var(--dark-bg); color: white;}
+        .bento-item:nth-child(4) { grid-column: span 1; --box-color: var(--sas-green); color: white;}
+        .bento-item:nth-child(5) { grid-column: span 2; --box-color: var(--sas-blue); color: white;}
+        
+        .bento-item h4 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; z-index: 3; position: relative; text-shadow: 0 2px 10px rgba(0,0,0,0.5);}
+        .bento-item:nth-child(1) h4 { font-size: 2.5rem; }
+        .bento-item i { position: absolute; top: 20px; right: 20px; font-size: 3rem; opacity: 0.3; transition: transform 0.5s ease; z-index: 1; }
+        .bento-item:hover i { transform: scale(0.5); opacity: 0;}
+        
+        .bento-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center 25%; opacity: 0; transform: scale(1.1); filter: brightness(0.6); transition: opacity 0.6s ease, transform 0.6s ease; z-index: 2; }
+        .bento-item:hover .bento-img { opacity: 1; transform: scale(1); }
+        
+        /* =========================================
+           11. Partners Marquee (Infinite Scroll)
+           ========================================= */
+        .marquee-section { background: white; padding: 4rem 0 4rem 4vw; overflow: hidden; display: flex; align-items: center; }
+        .marquee-container { display: flex; width: 200%; animation: scroll-marquee 20s linear infinite; }
+        .marquee-content { display: flex; justify-content: space-around; align-items: center; width: 50%; }
+        .marquee-content img { max-height: 60px; max-width: 150px; object-fit: contain; mix-blend-mode: multiply; filter: grayscale(100%) opacity(0.7); transition: all 0.3s; }
+        .marquee-content img:hover { filter: grayscale(0%) opacity(1); transform: scale(1.1); }
+        @keyframes scroll-marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* =========================================
+           12. Footer (3 Columns Layout)
+           ========================================= */
+        footer { background: var(--sas-blue); color: white; padding: 6rem 5vw 4rem 8vw; display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 3rem; }
+        .footer-col { display: flex; flex-direction: column; }
+        .footer-title { font-family: var(--font-display); font-size: 1.8rem; color: var(--sas-yellow); margin-bottom: 1.5rem; }
+
+        /* Footer Left Col: FAQ & Contact Header */
+        .faq-container details { border-bottom: 1px solid rgba(255,255,255,0.3); padding: 1rem 0; cursor: none; }
+        .faq-container summary { font-family: var(--font-display); font-size: 1rem; font-weight: 700; list-style: none; display: flex; justify-content: space-between; }
+        .faq-container p { margin-top: 1rem; color: rgba(255,255,255,0.9); font-size: 0.9rem; line-height: 1.6; }
+
+        /* Footer Middle Col: Logo & Emails */
+        .footer-logo { display: flex; justify-content: flex-start; margin-bottom: 1.5rem; }
+        .footer-logo img { height: 80px; object-fit: contain; }
+        .footer-emails p { margin-bottom: 1rem; font-size: 0.95rem; }
+        .footer-emails a { color: white; font-weight: 600; text-decoration: none; transition: color 0.3s; }
+        .footer-emails a:hover { color: var(--sas-yellow); }
+        
+        /* Footer Right Col: Map, Address & Socials */
+        .map-container { width: 100%; height: 150px; border-radius: 15px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.3s; border: 1px solid rgba(255,255,255,0.2); }
+        .map-link { display: block; text-decoration: none; }
+        .map-link:hover .map-container { transform: scale(1.02); }
+        
+        .contact-list { list-style: none; }
+        .contact-list li { display: flex; gap: 15px; margin-bottom: 1rem; align-items: flex-start; font-size: 0.9rem; line-height: 1.4; color: rgba(255,255,255,0.9); }
+        .contact-list i { color: var(--sas-yellow); font-size: 1.2rem; margin-top: 3px; }
+
+        .footer-socials { display: flex; gap: 10px; margin-top: 1.5rem; flex-wrap: wrap; }
+        .footer-socials a { display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); color: white; font-size: 1.2rem; transition: all 0.3s ease; text-decoration: none; }
+        .footer-socials a:hover { background: var(--sas-orange); transform: translateY(-3px); }
+
+        /* =========================================
+           13. Responsive Breakpoints
+           ========================================= */
+        @media (max-width: 1100px) {
+            .nav-text-btn { display: none; } 
+            .history-section, .programs-section, .projects-section, footer { padding-left: 5vw; }
+            .header-logo-link { right: 50%; transform: translateX(50%); }
+            footer { grid-template-columns: 1fr 1fr; } /* Shift to 2 columns on tablets */
+        }
+        @media (max-width: 900px) {
+            .hero-concept h2 { font-size: 1.8rem; }
+            .box-title { font-size: 1.5rem; }
+            .history-block, .program-card { grid-template-columns: 1fr; }
+            .bento-grid { grid-template-columns: 1fr; }
+            .bento-item:nth-child(n) { grid-column: span 1; grid-row: span 1; }
+            footer { grid-template-columns: 1fr; } /* Stack footer cols on mobile */
+            .cursor { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Native Custom Cursor -->
+    <div class="cursor" id="cursor"><i class="fa-solid fa-earth-americas"></i></div>
+
+    <!-- Main Fixed Header -->
+    <header id="main-header">
+        <a href="#inicio" class="header-logo-link hover-target">
+            <img src="https://i.ibb.co/B5YNt2BZ/logomejoradosas.png" alt="Subir al Sur Logo" class="header-logo">
+        </a>
+    </header>
+
+    <!-- Right Sidebar Floating Controls -->
+    <div class="floating-sidebar">
+        <a href="https://www.instagram.com/fundacionses" class="floating-btn hover-target" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://www.facebook.com/FundacionSes" class="floating-btn hover-target" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#" class="floating-btn floating-lang hover-target">EN</a>
+    </div>
+
+    <!-- Navigation Coreography Items -->
+    <a href="#inicio" class="nav-text-btn btn-inicio hover-target"><span>Inicio</span></a>
+    <a href="#historia" class="nav-text-btn btn-historia hover-target"><span>Historia</span></a>
+    <a href="#programas" class="nav-text-btn btn-programas hover-target"><span>Programas</span></a>
+    <a href="#iniciativas" class="nav-text-btn btn-iniciativas hover-target"><span>Iniciativas</span></a>
+    <a href="#faq" class="nav-text-btn btn-faq hover-target"><span>FAQ</span></a>
+    <a href="#contacto" class="nav-text-btn btn-contacto hover-target"><span>Contacto</span></a>
+
+    <!-- Initial Hero View -->
+    <section id="inicio" class="hero">
+        <div class="hero-dynamic-bg" id="dynamicBg"></div>
+        <div class="hero-content blur-reveal">
+            
+            <div class="typewriter-container">
+                <span id="typed-text-hero"></span><span class="cursor-blink">|</span>
+            </div>
+            
+            <div class="hero-concept">
+                <div><h2>Pero... ¿Sabés que es el Voluntariado Intercultural?</h2></div>
+                <div>
+                    <p><span style="color: var(--sas-pink); font-weight: 700;">Es una forma de aprender en otra cultura.</span> A través de prácticas solidarias, educativas y comunitarias queremos que las personas hagan consciente la importancia de su rol en la sociedad y cultiven la paz estén donde estén.</p>
+                    <p style="margin-top: 1rem;">Mientras se aprende otra lengua, otras costumbres y una nueva cultura, también se hacen nuevos amigos y amigas. <strong>Con el voluntariado intercultural activamos la observación, la reflexión y el aprendizaje continuo, herramientas clave para toda la vida.</strong></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- History / About Us -->
+    <section id="historia" class="history-section">
+        <div class="section-watermark watermark-history">QUIÉNES SOMOS</div>
+        
+        <!-- History Block 1 -->
+        <div class="history-block">
+            <div class="history-text blur-reveal">
+                <p>Allá por el 2011 Subir al Sur tuvo su segunda etapa de vida, naciendo como programa de voluntariado intercultural en Fundación SES, Argentina. Pero su primera etapa de vida se había iniciado en el 2005 gracias a la experiencia de una voluntaria argentina que viajó a Nepal a realizar un voluntariado junto a otras personas jóvenes de distintas latitudes.</p>
+                <p>La voluntaria se llamaba Cecilia Milesi. Cecilia luego de su viaje reunió a distintos profesionales y educadores y juntos organizaron los primeros proyectos piloto de voluntariado intercultural en Misiones y Formosa.</p>
+            </div>
+            <div class="box-container blur-reveal" style="--box-color: var(--sas-blue);">
+                <h3 class="box-title title-outside">El Origen: Nepal 2005</h3>
+                <h3 class="box-title title-inside">El Origen: Nepal 2005</h3>
+                <div class="color-reveal-wrapper hover-target">
+                    <i class="fa-solid fa-mountain-sun color-reveal-icon"></i>
+                    <div class="color-reveal-img" style="background-image: url('https://i.ibb.co/TB1QswRP/yec-3.jpg');"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- History Block 2 -->
+        <div class="history-block">
+            <div class="history-text blur-reveal">
+                <p>Actualmente, Subir al Sur promueve la movilidad de juventudes, la participación comunitaria y el protagonismo juvenil a través de experiencias de voluntariado local-global en el marco de programas de intercambio.</p>
+            </div>
+            <div class="box-container blur-reveal" style="--box-color: var(--sas-orange);">
+                <h3 class="box-title title-outside">Presente y Protagonismo</h3>
+                <h3 class="box-title title-inside">Presente y Protagonismo</h3>
+                <div class="color-reveal-wrapper hover-target">
+                    <i class="fa-solid fa-earth-americas color-reveal-icon"></i>
+                    <div class="color-reveal-img" style="background-image: url('https://i.ibb.co/Kxbygfbr/National-Students-Demostration.jpg');"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mission Banner Sub-component -->
+        <div class="mission-banner hover-target" id="missionBanner" style="--box-color: var(--sas-blue);">
+            <h3 class="box-title title-outside">Nuestra Misión</h3>
+            <h3 class="box-title title-inside">Nuestra Misión</h3>
+            
+            <div class="mission-typewriter-container">
+                <span id="typed-text-mission"></span><span class="cursor-blink" id="mission-cursor" style="display:none;">|</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Programs Listing -->
+    <section id="programas" class="programs-section">
+        <div class="section-watermark watermark-programs">PROGRAMAS</div>
+        <div class="programs-container">
+            
+            <!-- Program 1 (Incoming) -->
+            <div class="program-card blur-reveal">
+                <div class="program-content">
+                    <p>Nuestros programas le dan la bienvenida a toda persona que esté dispuesta e interesada en conocer la cultura Argentina y su diversidad. Promovemos programas de larga duración (de 6 a 12 meses) pero también desarrollamos programas de 4 semanas a 5 meses.</p>
+                    <p style="color: white; font-weight: 600; margin-bottom: 1rem;">Nuestro programa de Incoming cuenta con:</p>
+                    <div class="benefits-grid">
+                        <div><i class="fa-solid fa-house"></i> Alojamiento</div><div><i class="fa-solid fa-utensils"></i> Comidas</div><div><i class="fa-solid fa-shield-heart"></i> Seguro</div><div><i class="fa-solid fa-hands-holding-circle"></i> Acompañamiento</div><div><i class="fa-solid fa-wallet"></i> Dinero</div><div><i class="fa-solid fa-chalkboard-user"></i> Seminario</div><div><i class="fa-solid fa-briefcase"></i> Proyecto</div><div><i class="fa-solid fa-award"></i> Certificado</div>
+                    </div>
+                    <div class="alert-modern" style="border-left-color: var(--sas-green); background: rgba(140, 198, 63, 0.1);">
+                        <strong>Importante:</strong> Los programas tienen costos. Los servicios pueden variar según el país. No incluye pasajes.
+                    </div>
+                </div>
+                <div class="box-container hover-target" style="--box-color: var(--sas-green);">
+                    <h3 class="box-title title-outside"><i class="fa-solid fa-map-location-dot"></i> Venir a Argentina</h3>
+                    <h3 class="box-title title-inside"><i class="fa-solid fa-map-location-dot"></i> Venir a Argentina</h3>
+                    <div class="color-reveal-wrapper">
+                        <i class="fa-solid fa-map-location-dot color-reveal-icon"></i>
+                        <div class="color-reveal-img" style="background-image: url('https://i.ibb.co/zTvxYKBn/Afro-Descendent-Org-visit.jpg');"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Program 2 (Outgoing) -->
+            <div class="program-card reverse blur-reveal">
+                <div class="program-content">
+                    <p>Desde la Argentina queremos que cada vez haya más personas que viajen y vivan una experiencia de voluntariado en otro país.</p>
+                    <p style="color: white; font-weight: 600; margin-bottom: 1rem;">Cada programa de voluntariado en el exterior cuenta con:</p>
+                    <div class="benefits-grid">
+                        <div><i class="fa-solid fa-house"></i> Alojamiento</div><div><i class="fa-solid fa-utensils"></i> Comidas</div><div><i class="fa-solid fa-shield-heart"></i> Seguro</div><div><i class="fa-solid fa-hands-holding-circle"></i> Acompañamiento</div><div><i class="fa-solid fa-wallet"></i> Dinero</div><div><i class="fa-solid fa-briefcase"></i> Proyecto</div><div><i class="fa-solid fa-award"></i> Certificado</div>
+                    </div>
+                    <div class="alert-modern" style="border-left-color: var(--sas-pink); background: rgba(242, 60, 106, 0.1);">
+                        <strong>Importante:</strong> Los programas tienen costos. Los servicios pueden variar según el programa. No incluye pasajes.
+                    </div>
+                </div>
+                <div class="box-container hover-target" style="--box-color: var(--sas-pink);">
+                    <h3 class="box-title title-outside"><i class="fa-solid fa-plane-departure"></i> Subir al Mundo</h3>
+                    <h3 class="box-title title-inside"><i class="fa-solid fa-plane-departure"></i> Subir al Mundo</h3>
+                    <div class="color-reveal-wrapper">
+                        <i class="fa-solid fa-plane-departure color-reveal-icon"></i>
+                        <div class="color-reveal-img" style="background-image: url('https://i.ibb.co/xqDGRRxC/IMG-20260416-WA0047.jpg');"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bento Grid Initiatives -->
+    <section id="iniciativas" class="projects-section blur-reveal">
+        <div class="section-watermark watermark-projects">INICIATIVAS</div>
+        <div class="bento-grid" id="bentoContainer">
+            <div class="bento-item hover-target"><div class="bento-img" style="background-image: url('https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?q=80&w=800');"></div><i class="fa-solid fa-hand-fist"></i><h4>Decolonize</h4></div>
+            <div class="bento-item hover-target"><div class="bento-img" style="background-image: url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=800');"></div><i class="fa-solid fa-magnifying-glass-chart"></i><h4>Investigación</h4></div>
+            <div class="bento-item hover-target"><div class="bento-img" style="background-image: url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=800');"></div><i class="fa-solid fa-globe"></i><h4>Escuela de Ciudadanía Global</h4></div>
+            <div class="bento-item hover-target"><div class="bento-img" style="background-image: url('https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=800');"></div><i class="fa-solid fa-shield-halved"></i><h4>Prevención de la Violencia Sexual</h4></div>
+            <div class="bento-item hover-target"><div class="bento-img" style="background-image: url('https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=800');"></div><i class="fa-solid fa-puzzle-piece" style="color: var(--sas-orange);"></i><h4>Habilidades en el Voluntariado</h4></div>
+        </div>
+    </section>
+
+    <!-- Infinite Scroll Partners Marquee -->
+    <section class="marquee-section blur-reveal">
+        <div class="marquee-container hover-target">
+            <div class="marquee-content">
+                <h4 style="color: var(--sas-blue); white-space: nowrap; margin-right: 20px;">Redes y Partners:</h4>
+                <img src="https://i.ibb.co/chh3zGch/BA-original-1.jpg" alt="BA"><img src="https://i.ibb.co/BH046ccN/download.jpg" alt="Partner"><img src="https://i.ibb.co/4RPYCF38/Global-Change-Logo-Cleary-Blanco.png" alt="Global Change"><img src="https://i.ibb.co/WvPX1VnX/icye-150x150.jpg" alt="ICYE"><img src="https://i.ibb.co/Kp6198qt/image0.png" alt="image0"><img src="https://i.ibb.co/qYz4Q82m/logo-CLAYSS-01.png" alt="CLAYSS"><img src="https://i.ibb.co/bY4bWS8/logo2-1.png" alt="Logo 2"><img src="https://i.ibb.co/jkR6QRGB/Logo-AS-01-150x150.png" alt="Logo AS"><img src="https://i.ibb.co/v6zpXSD9/Picture1.png" alt="Picture1"><img src="https://i.ibb.co/hxNpVM0z/unsam.jpg" alt="UNSAM">
+            </div>
+            <div class="marquee-content">
+                <h4 style="color: var(--sas-blue); white-space: nowrap; margin-right: 20px;">Redes y Partners:</h4>
+                <img src="https://i.ibb.co/chh3zGch/BA-original-1.jpg" alt="BA"><img src="https://i.ibb.co/BH046ccN/download.jpg" alt="Partner"><img src="https://i.ibb.co/4RPYCF38/Global-Change-Logo-Cleary-Blanco.png" alt="Global Change"><img src="https://i.ibb.co/WvPX1VnX/icye-150x150.jpg" alt="ICYE"><img src="https://i.ibb.co/Kp6198qt/image0.png" alt="image0"><img src="https://i.ibb.co/qYz4Q82m/logo-CLAYSS-01.png" alt="CLAYSS"><img src="https://i.ibb.co/bY4bWS8/logo2-1.png" alt="Logo 2"><img src="https://i.ibb.co/jkR6QRGB/Logo-AS-01-150x150.png" alt="Logo AS"><img src="https://i.ibb.co/v6zpXSD9/Picture1.png" alt="Picture1"><img src="https://i.ibb.co/hxNpVM0z/unsam.jpg" alt="UNSAM">
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Footer Area -->
+    <footer id="faq">
+        <!-- Col 1: FAQ -->
+        <div class="footer-col blur-reveal">
+            <h3 class="footer-title">Preguntas Frecuentes</h3>
+            <div class="faq-container">
+                <details><summary class="hover-target">¿Dónde puedo ver los proyectos? <i class="fa-solid fa-plus"></i></summary><p>Una vez que te pones en contacto, deberás conocer y seleccionar los proyectos que tenemos en la Argentina, disponibles en Castellano e Inglés.</p></details>
+            </div>
+            <h3 class="footer-title" style="margin-top: 2rem;">Contacto</h3>
+            <p style="color: rgba(255,255,255,0.9); font-size: 0.9rem; line-height: 1.6;">Ponete en contacto con nuestro equipo para conocer más sobre nuestros programas de voluntariado y resolver tus dudas.</p>
+        </div>
+        
+        <!-- Col 2: Brand & Contact Info -->
+        <div class="footer-col blur-reveal" id="contacto">
+            <div class="footer-logo">
+                <img src="https://i.ibb.co/B5YNt2BZ/logomejoradosas.png" alt="Subir al Sur">
+            </div>
+            <div class="footer-emails">
+                <p><strong>Si estás en Argentina:</strong><br> <a href="mailto:voluntariado.sas@fundses.org.ar" class="hover-target">voluntariado.sas@fundses.org.ar</a></p>
+                <p><strong>Si estás fuera de la Argentina:</strong><br> <a href="mailto:incomingargentina@fundses.org.ar" class="hover-target">incomingargentina@fundses.org.ar</a></p>
+                <p style="margin-top: 1rem;"><strong>Consultas Generales:</strong><br> <a href="mailto:info@fundses.org.ar" class="hover-target">info@fundses.org.ar</a></p>
+            </div>
+        </div>
+
+        <!-- Col 3: Map, Physical Address & Socials -->
+        <div class="footer-col blur-reveal">
+            <h3 class="footer-title">Ubicación</h3>
+            
+            <a href="https://maps.google.com/?q=Bulnes+1455,+CABA,+Argentina" target="_blank" class="map-link hover-target" title="Abrir en Google Maps">
+                <div class="map-container">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3284.148810787135!2d-58.4191636!3d-34.5936856!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcca87a66fbc7b%3A0xc3cfc319409848eb!2sBulnes%201455%2C%20C1176%20ABW%2C%20Buenos%20Aires!5e0!3m2!1sen!2sar!4v1700000000000!5m2!1sen!2sar" width="100%" height="150" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </a>
+
+            <ul class="contact-list">
+                <li>
+                    <i class="fa-solid fa-location-dot"></i> 
+                    <span>Bulnes 1455 - 4to D<br>Ciudad Autónoma de Buenos Aires - Argentina</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-phone"></i> 
+                    <span>Tel. (5411) 5368 8370 / 8371 / 8372</span> 
+                </li>
+            </ul>
+
+            <div class="footer-socials">
+                <a href="https://www.instagram.com/fundacionses" target="_blank" class="hover-target" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://www.facebook.com/FundacionSes" target="_blank" class="hover-target" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="https://twitter.com/FundacionSES" target="_blank" class="hover-target" title="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="https://www.linkedin.com/company/1280296/admin/feed/posts/" target="_blank" class="hover-target" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                <a href="https://www.youtube.com/user/fundacionses" target="_blank" class="hover-target" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Client-Side Logic -->
+    <script>
+        // Custom Interaction Cursor Mapping
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; });
+        document.querySelectorAll('.hover-target, a, summary').forEach(target => { target.addEventListener('mouseenter', () => cursor.classList.add('hovered')); target.addEventListener('mouseleave', () => cursor.classList.remove('hovered')); });
+
+        // Dynamic Navigation Scroll Event Listener
+        window.addEventListener('scroll', () => { 
+            if(window.scrollY > 80) { document.body.classList.add('scrolled-nav'); } else { document.body.classList.remove('scrolled-nav'); }
+        });
+
+        // Intersection Observer for Blur Reveal Effects
+        const blurObserver = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('revealed'); blurObserver.unobserve(entry.target); } }); }, { threshold: 0.15 });
+        document.querySelectorAll('.blur-reveal').forEach(el => blurObserver.observe(el));
+
+        // Reusable DOM Typewriter Engine
+        function startTypewriter(elementId, htmlString, speed, callback) {
+            const target = document.getElementById(elementId); let i = 0;
+            function type() {
+                if (i < htmlString.length) {
+                    if (htmlString.charAt(i) === '<') {
+                        let tag = ''; while (htmlString.charAt(i) !== '>' && i < htmlString.length) { tag += htmlString.charAt(i); i++; }
+                        tag += '>'; target.innerHTML += tag; i++; type(); 
+                    } else { target.innerHTML += htmlString.charAt(i); i++; setTimeout(type, speed); }
+                } else if(callback) { callback(); }
+            }
+            type();
+        }
+
+        // Hero Typewriter Initialization
+        setTimeout(() => {
+            const heroText = 'Somos <strong style="color: var(--sas-pink);">Subir al Sur</strong>, el programa de Voluntariado Intercultural de <strong style="color: var(--sas-orange);">Fundación SES</strong>.';
+            startTypewriter('typed-text-hero', heroText, 40);
+        }, 500);
+
+        // Mission Observer & Typewriter Instance
+        let missionTyped = false;
+        const missionText = "La misión del programa es <span style='color: var(--sas-orange); font-weight: 900;'>promover procesos de educación intercultural para la paz</span> mediante el <span style='color: var(--sas-pink); font-weight: 700;'>encuentro solidario</span> entre personas jóvenes de diversas regiones del mundo.<br><br><span style='font-size: 1.2rem; font-weight: 400;'>Su visión aspira a que las juventudes sean <strong style='color: var(--sas-green); font-weight: 900;'>protagonistas en la construcción de sociedades más justas y equitativas</strong>, desde el reconocimiento de la diversidad y el cuidado del mundo.</span>";
+        
+        const missionObserver = new IntersectionObserver((entries) => {
+            if(entries[0].isIntersecting && !missionTyped) {
+                missionTyped = true; const banner = document.getElementById('missionBanner'); banner.classList.add('zoomed-in');
+                setTimeout(() => { document.getElementById('mission-cursor').style.display = 'inline-block'; startTypewriter('typed-text-mission', missionText, 25); }, 800);
+                missionObserver.disconnect();
+            }
+        }, { threshold: 0.4 });
+        missionObserver.observe(document.getElementById('missionBanner'));
+
+        // Background Hero Concept Floating Elements
+        const words = ["VOLUNTARIADO", "INTERCULTURAL", "PAZ", "DIVERSIDAD", "JUVENTUDES", "CULTURA"];
+        const bgContainer = document.getElementById('dynamicBg');
+        function spawnWord() {
+            const wordEl = document.createElement('div'); wordEl.className = 'floating-word';
+            wordEl.innerText = words[Math.floor(Math.random() * words.length)];
+            const size = Math.random() * 8 + 4; const topPos = Math.random() * 80; const leftPos = Math.random() * 80; 
+            wordEl.style.fontSize = `${size}vw`; wordEl.style.top = `${topPos}%`; wordEl.style.left = `${leftPos}%`; 
+            bgContainer.appendChild(wordEl);
+            setTimeout(() => { wordEl.style.opacity = '0.04'; }, 50);
+            setTimeout(() => { wordEl.style.opacity = '0'; setTimeout(() => wordEl.remove(), 2000); }, 3000); 
+        }
+        setInterval(spawnWord, 1500);
+
+        // Bento Grid Staggered Rendering
+        const bentoObserver = new IntersectionObserver((entries) => {
+            if(entries[0].isIntersecting) {
+                document.querySelectorAll('.bento-item').forEach((item, index) => { setTimeout(() => item.classList.add('visible'), index * 150); });
+                bentoObserver.disconnect();
+            }
+        }, { threshold: 0.2 });
+        bentoObserver.observe(document.getElementById('bentoContainer'));
+    </script>
+</body>
+</html>
