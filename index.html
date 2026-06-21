@@ -5,12 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subir al Sur | Voluntariado Intercultural</title>
     
-    <!-- Google Fonts Integration -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
-    
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -35,7 +32,7 @@
         body { font-family: var(--font-body); background-color: var(--light-bg); color: var(--text-dark); overflow-x: hidden; cursor: none; }
 
         /* =========================================
-           02. Custom Cursor
+           02. Custom Cursor (Desktop Only)
            ========================================= */
         .cursor {
             width: 30px; height: 30px; border: 2px solid white; background-color: transparent; border-radius: 50%;
@@ -50,11 +47,9 @@
         /* =========================================
            03. Animation Utilities
            ========================================= */
-        /* Intersection Observer Blur Reveal */
         .blur-reveal { opacity: 0; filter: blur(15px); transform: translateY(30px); transition: opacity 1s ease, filter 1s ease, transform 1s cubic-bezier(0.25, 0.8, 0.25, 1); }
         .blur-reveal.revealed { opacity: 1; filter: blur(0); transform: translateY(0); }
 
-        /* Section Background Text Watermarks */
         .section-watermark { position: absolute; top: 2%; left: 0; width: 100%; text-align: center; font-family: var(--font-display); font-size: 10vw; font-weight: 900; white-space: nowrap; pointer-events: none; z-index: 0; user-select: none; }
         .watermark-history { color: var(--sas-blue); opacity: 0.1; }
         .watermark-programs { color: var(--sas-pink); opacity: 0.08; }
@@ -70,19 +65,20 @@
         .floating-lang:hover { background: var(--sas-pink); }
 
         /* =========================================
-           05. Header & Main Logo
+           05. DESKTOP ONLY: Header & Logo Layout 
            ========================================= */
-        #main-header { position: fixed; top: 0; left: 0; width: 100%; height: 90px; z-index: 1005; pointer-events: none; transition: background 0.4s, backdrop-filter 0.4s; }
-        body.scrolled-nav #main-header { background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(10px); }
+        #desktop-header { position: fixed; top: 0; left: 0; width: 100%; height: 90px; z-index: 1005; pointer-events: none; transition: background 0.4s, backdrop-filter 0.4s; }
+        body.scrolled-nav #desktop-header { background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(10px); }
         .header-logo-link { position: absolute; top: 1.5rem; right: 5vw; pointer-events: auto; transition: all 0.8s cubic-bezier(0.25, 1, 0.3, 1); }
         .header-logo { height: 55px; transition: transform 0.3s ease; }
         .header-logo-link:hover .header-logo { transform: scale(1.05); }
-        /* Centers logo when scrolling */
         body.scrolled-nav .header-logo-link { right: 50%; transform: translateX(50%); }
 
         /* =========================================
-           06. Dynamic Navigation Components
+           06. DESKTOP ONLY: Navigation Architecture
            ========================================= */
+        #desktop-nav { display: block; }
+        
         .nav-text-btn {
             position: fixed; z-index: 1000; width: 110px; height: 40px; border-radius: 20px;
             color: white; text-decoration: none; font-family: var(--font-display); font-weight: 700; font-size: 0.75rem; text-transform: uppercase;
@@ -92,23 +88,13 @@
         .nav-text-btn span { display: inline-block; transition: transform 0.3s ease; }
         .nav-text-btn:hover span { transform: scale(1.15); }
 
-        /* Navigation Color Assignments */
-        .btn-inicio { background-color: var(--sas-blue); }
-        .btn-historia { background-color: var(--sas-orange); }
-        .btn-programas { background-color: var(--sas-pink); }
-        .btn-iniciativas { background-color: var(--sas-green); }
-        .btn-faq { background-color: var(--sas-yellow); color: var(--dark-bg); } 
-        .btn-contacto { background-color: var(--sas-lightblue); }
+        .btn-inicio { background-color: var(--sas-blue); top: 2rem; left: calc(50% - 300px); transform: rotate(0deg); transition-delay: 0.5s; }
+        .btn-historia { background-color: var(--sas-orange); top: 2rem; left: calc(50% - 180px); transform: rotate(0deg); transition-delay: 0.4s; }
+        .btn-programas { background-color: var(--sas-pink); top: 2rem; left: calc(50% - 60px); transform: rotate(0deg); transition-delay: 0.3s; }
+        .btn-iniciativas { background-color: var(--sas-green); top: 2rem; left: calc(50% + 60px); transform: rotate(0deg); transition-delay: 0.2s; }
+        .btn-faq { background-color: var(--sas-yellow); color: var(--dark-bg); top: 2rem; left: calc(50% + 180px); transform: rotate(0deg); transition-delay: 0.1s; } 
+        .btn-contacto { background-color: var(--sas-lightblue); top: 2rem; left: calc(50% + 300px); transform: rotate(0deg); transition-delay: 0s; }
 
-        /* Nav Initial State (Horizontal Center-Top) */
-        .btn-inicio { top: 2rem; left: calc(50% - 300px); transform: rotate(0deg); transition-delay: 0.5s; }
-        .btn-historia { top: 2rem; left: calc(50% - 180px); transform: rotate(0deg); transition-delay: 0.4s; }
-        .btn-programas { top: 2rem; left: calc(50% - 60px); transform: rotate(0deg); transition-delay: 0.3s; }
-        .btn-iniciativas { top: 2rem; left: calc(50% + 60px); transform: rotate(0deg); transition-delay: 0.2s; }
-        .btn-faq { top: 2rem; left: calc(50% + 180px); transform: rotate(0deg); transition-delay: 0.1s; }
-        .btn-contacto { top: 2rem; left: calc(50% + 300px); transform: rotate(0deg); transition-delay: 0s; }
-
-        /* Nav Scrolled State (Vertical Left-Edge Stack) */
         body.scrolled-nav .btn-inicio { top: calc(50% - 300px); left: -25px; transform: rotate(-90deg); transition-delay: 0s; }
         body.scrolled-nav .btn-historia { top: calc(50% - 180px); left: -25px; transform: rotate(-90deg); transition-delay: 0.1s; }
         body.scrolled-nav .btn-programas { top: calc(50% - 60px); left: -25px; transform: rotate(-90deg); transition-delay: 0.2s; }
@@ -116,8 +102,11 @@
         body.scrolled-nav .btn-faq { top: calc(50% + 180px); left: -25px; transform: rotate(-90deg); transition-delay: 0.4s; }
         body.scrolled-nav .btn-contacto { top: calc(50% + 300px); left: -25px; transform: rotate(-90deg); transition-delay: 0.5s; }
 
+        /* Ocultamos por defecto el menú celular para la versión de PC */
+        #mobile-nav { display: none; }
+
         /* =========================================
-           07. Hero Section
+           07. Hero Section Layout
            ========================================= */
         .hero {
             height: 100vh; display: flex; flex-direction: column; justify-content: center;
@@ -134,36 +123,35 @@
         .hero-concept { display: flex; gap: 4rem; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 2.5rem; }
         .hero-concept div { flex: 1; }
         
-        /* Hero Subtitle Styling */
         .hero-concept h2 { font-size: 2.2rem; color: var(--sas-blue); margin-bottom: 1rem; line-height: 1.2; font-weight: 700; }
         .hero-concept p { font-size: 1.1rem; opacity: 0.8; line-height: 1.8; }
         .hero-concept strong { color: var(--sas-green); font-weight: 600; }
 
         /* =========================================
-           08. History Section & Image Reveals
+           08. Content Blocks & Split Titles
            ========================================= */
         .history-section { padding: 8rem 5vw 8rem 8vw; background-color: var(--light-bg); position: relative; overflow: hidden;}
         .history-block { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; min-height: 50vh; margin-bottom: 8rem; position: relative; z-index: 2; align-items: center; }
         .history-text { display: flex; flex-direction: column; justify-content: center; z-index: 2; margin-top: 4rem;}
         .history-text p { font-size: 1.2rem; line-height: 1.8; margin-bottom: 1rem; color: #444; }
         
-        /* Split Title Wrapper Setup */
         .box-container { position: relative; width: 100%; height: 100%; min-height: 400px; margin-top: 2rem; }
         .box-title { position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%); font-family: var(--font-display); font-size: 2.5rem; font-weight: 900; white-space: nowrap; margin: 0; z-index: 10; pointer-events: none; text-align: center; }
         .title-outside { color: var(--box-color); clip-path: inset(0 0 50% 0); } 
         .title-inside { color: white; clip-path: inset(50% 0 0 0); } 
         
-        /* Image Reveal Component */
         .color-reveal-wrapper { width: 100%; height: 100%; position: absolute; top: 0; left: 0; border-radius: 20px; display: flex; justify-content: center; align-items: center; overflow: hidden; transition: box-shadow 0.5s ease; background-color: var(--box-color); }
         .color-reveal-icon { font-size: 10rem; color: rgba(255,255,255,0.2); transition: opacity 0.5s ease, transform 0.5s; z-index: 1; }
         .color-reveal-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center 25%; opacity: 0; filter: grayscale(50%); transform: scale(1.1); transition: opacity 0.6s ease, transform 0.6s ease, filter 0.6s ease; z-index: 2; }
         
-        .box-container:hover .color-reveal-icon { opacity: 0; transform: scale(0.5); }
-        .box-container:hover .color-reveal-img { opacity: 1; transform: scale(1); filter: grayscale(0%); }
+        @media (hover: hover) and (pointer: fine) {
+            .box-container:hover .color-reveal-icon { opacity: 0; transform: scale(0.5); }
+            .box-container:hover .color-reveal-img { opacity: 1; transform: scale(1); filter: grayscale(0%); }
+        }
+
         .history-block:nth-child(even) .history-text { order: 2; }
         .history-block:nth-child(even) .box-container { order: 1; }
         
-        /* Mission Text Banner */
         .mission-banner { 
             background-color: var(--box-color); color: white; padding: 6rem 5vw; border-radius: 30px; text-align: center; margin-top: 4rem; position: relative; 
             transform: scale(0.8); opacity: 0; transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 1s, box-shadow 1s; 
@@ -172,7 +160,7 @@
         .mission-typewriter-container { font-size: 1.8rem; font-family: var(--font-display); font-weight: 700; line-height: 1.5; max-width: 1000px; margin: 0 auto; min-height: 200px; }
         
         /* =========================================
-           09. Programs Section
+           09. Programs Layout
            ========================================= */
         .programs-section { padding: 8rem 5vw 5rem 8vw; background: var(--dark-bg); color: white; position: relative; overflow: hidden;}
         .programs-container { display: flex; flex-direction: column; gap: 4rem; position: relative; z-index: 2; }
@@ -188,13 +176,18 @@
         .alert-modern { padding: 1.5rem; font-size: 0.95rem; line-height: 1.6; border-radius: 8px;}
         
         /* =========================================
-           10. Projects / Initiatives (Bento Grid)
+           10. Initiatives Grid (Bento)
            ========================================= */
         .projects-section { padding: 8rem 5vw 8rem 8vw; background: var(--light-bg); position: relative; overflow: hidden;}
         .bento-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 250px; gap: 1.5rem; margin-top: 3rem; position: relative; z-index: 2;}
         .bento-item { border-radius: 20px; position: relative; overflow: hidden; display: flex; align-items: flex-end; padding: 2rem; cursor: none; opacity: 0; transform: translateY(50px); transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.4s ease; background-color: var(--box-color); }
         .bento-item.visible { opacity: 1; transform: translateY(0); }
-        .bento-item:hover { box-shadow: 0 0 20px var(--box-color), 0 0 40px var(--box-color); z-index: 10;}
+        
+        @media (hover: hover) and (pointer: fine) {
+            .bento-item:hover { box-shadow: 0 0 20px var(--box-color), 0 0 40px var(--box-color); z-index: 10;}
+            .bento-item:hover i { transform: scale(0.5); opacity: 0;}
+            .bento-item:hover .bento-img { opacity: 1; transform: scale(1); }
+        }
         
         .bento-item:nth-child(1) { grid-column: span 2; grid-row: span 2; --box-color: var(--sas-orange); color: white;}
         .bento-item:nth-child(2) { grid-column: span 2; --box-color: var(--sas-pink); color: white;}
@@ -205,13 +198,10 @@
         .bento-item h4 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; z-index: 3; position: relative; text-shadow: 0 2px 10px rgba(0,0,0,0.5);}
         .bento-item:nth-child(1) h4 { font-size: 2.5rem; }
         .bento-item i { position: absolute; top: 20px; right: 20px; font-size: 3rem; opacity: 0.3; transition: transform 0.5s ease; z-index: 1; }
-        .bento-item:hover i { transform: scale(0.5); opacity: 0;}
-        
         .bento-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center 25%; opacity: 0; transform: scale(1.1); filter: brightness(0.6); transition: opacity 0.6s ease, transform 0.6s ease; z-index: 2; }
-        .bento-item:hover .bento-img { opacity: 1; transform: scale(1); }
         
         /* =========================================
-           11. Partners Marquee (Infinite Scroll)
+           11. Partners Marquee
            ========================================= */
         .marquee-section { background: white; padding: 4rem 0 4rem 4vw; overflow: hidden; display: flex; align-items: center; }
         .marquee-container { display: flex; width: 200%; animation: scroll-marquee 20s linear infinite; }
@@ -221,25 +211,22 @@
         @keyframes scroll-marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
         /* =========================================
-           12. Footer (3 Columns Layout)
+           12. Footer Structure
            ========================================= */
         footer { background: var(--sas-blue); color: white; padding: 6rem 5vw 4rem 8vw; display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 3rem; }
         .footer-col { display: flex; flex-direction: column; }
         .footer-title { font-family: var(--font-display); font-size: 1.8rem; color: var(--sas-yellow); margin-bottom: 1.5rem; }
 
-        /* Footer Left Col: FAQ & Contact Header */
-        .faq-container details { border-bottom: 1px solid rgba(255,255,255,0.3); padding: 1rem 0; cursor: none; }
+        .faq-container details { border-bottom: 1px solid rgba(255,255,255,0.3); padding: 1rem 0; cursor: pointer; }
         .faq-container summary { font-family: var(--font-display); font-size: 1rem; font-weight: 700; list-style: none; display: flex; justify-content: space-between; }
         .faq-container p { margin-top: 1rem; color: rgba(255,255,255,0.9); font-size: 0.9rem; line-height: 1.6; }
 
-        /* Footer Middle Col: Logo & Emails */
         .footer-logo { display: flex; justify-content: flex-start; margin-bottom: 1.5rem; }
         .footer-logo img { height: 80px; object-fit: contain; }
         .footer-emails p { margin-bottom: 1rem; font-size: 0.95rem; }
         .footer-emails a { color: white; font-weight: 600; text-decoration: none; transition: color 0.3s; }
         .footer-emails a:hover { color: var(--sas-yellow); }
         
-        /* Footer Right Col: Map, Address & Socials */
         .map-container { width: 100%; height: 150px; border-radius: 15px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.3s; border: 1px solid rgba(255,255,255,0.2); }
         .map-link { display: block; text-decoration: none; }
         .map-link:hover .map-container { transform: scale(1.02); }
@@ -253,53 +240,185 @@
         .footer-socials a:hover { background: var(--sas-orange); transform: translateY(-3px); }
 
         /* =========================================
-           13. Responsive Breakpoints
+           13. RESPONSIVE QUERIES (DESKTOP SAFE)
            ========================================= */
         @media (max-width: 1100px) {
-            .nav-text-btn { display: none; } 
             .history-section, .programs-section, .projects-section, footer { padding-left: 5vw; }
-            .header-logo-link { right: 50%; transform: translateX(50%); }
-            footer { grid-template-columns: 1fr 1fr; } /* Shift to 2 columns on tablets */
+            footer { grid-template-columns: 1fr 1fr; }
         }
+
+        /* =========================================
+           14. EXCLUSIVE MOBILE LAYER (100% ISOLATED)
+           ========================================= */
         @media (max-width: 900px) {
-            .hero-concept h2 { font-size: 1.8rem; }
-            .box-title { font-size: 1.5rem; }
-            .history-block, .program-card { grid-template-columns: 1fr; }
+            
+            /* Apagar ecosistema de PC */
+            .cursor { display: none !important; } 
+            .floating-sidebar { display: none !important; } 
+            #desktop-header { display: none !important; } 
+            #desktop-nav { display: none !important; } 
+            
+            /* Encender ecosistema Celular */
+            #mobile-nav {
+                display: flex !important;
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                pointer-events: none; z-index: 1100;
+            }
+
+            /* Estructura Base del Botón Táctil (Isolado) */
+            .mob-btn {
+                pointer-events: auto; /* Reactiva el click sobre el canvas invisible */
+                position: absolute;
+                width: 45px; height: 45px; border-radius: 25px;
+                display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+                color: white; text-decoration: none; font-family: var(--font-display);
+                transition: top 0.5s ease, transform 0.5s ease, height 0.4s ease, min-height 0.4s ease;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+                overflow: hidden;
+                
+                /* Estado Inicial Arriba */
+                top: 20px;
+                transform: translateY(0);
+                padding-top: 13px;
+            }
+            
+            .mob-btn i { font-size: 1.2rem; transition: transform 0.3s; line-height: 1; }
+            
+            /* Apilado de Letras Vertical Real (Text Orientation) */
+            .mob-label {
+                display: block; opacity: 0; max-height: 0;
+                font-size: 0.65rem; font-weight: 900;
+                writing-mode: vertical-rl;
+                text-orientation: upright;
+                letter-spacing: -2px; /* Junta las letras un poco para que no quede tan largo */
+                text-transform: uppercase;
+                transition: opacity 0.3s ease, max-height 0.3s ease;
+                margin-top: 10px;
+            }
+
+            /* Expansión (Primer Tap) */
+            .mob-btn.is-expanded { min-height: 160px; height: auto; }
+            .mob-btn-inicio.is-expanded { min-height: 240px; } /* SUBIR AL SUR es más largo */
+            .mob-btn.is-expanded .mob-label { opacity: 1; max-height: 250px; }
+            .mob-btn.is-expanded i { transform: scale(1.2); }
+
+            /* Posiciones horizontales (Distribución matemática centrada) */
+            .mob-btn-inicio      { left: calc(8.33% - 22.5px); background-color: var(--sas-blue); }
+            .mob-btn-historia    { left: calc(25% - 22.5px); background-color: var(--sas-orange); }
+            .mob-btn-programas   { left: calc(41.66% - 22.5px); background-color: var(--sas-pink); }
+            .mob-btn-iniciativas { left: calc(58.33% - 22.5px); background-color: var(--sas-green); }
+            .mob-btn-faq         { left: calc(75% - 22.5px); background-color: var(--sas-yellow); color: var(--dark-bg); }
+            .mob-btn-contacto    { left: calc(91.66% - 22.5px); background-color: var(--sas-lightblue); }
+
+            /* Scrolled State (Viaja hacia abajo resolviendo el bug de pantalla cortada) */
+            body.scrolled-nav .mob-btn {
+                top: calc(100% - 25px); /* Queda anclado a 25px exactos del borde inferior real */
+                transform: translateY(-100%);
+                flex-direction: column-reverse; /* El ícono queda abajo y el texto crece hacia arriba */
+                padding-top: 0; padding-bottom: 13px;
+            }
+            body.scrolled-nav .mob-btn .mob-label {
+                margin-top: 0; margin-bottom: 10px;
+            }
+
+            /* Ajustes Visuales Móviles Restantes */
+            .color-reveal-wrapper.is-centered .color-reveal-icon { opacity: 0; transform: scale(0.5); }
+            .color-reveal-wrapper.is-centered .color-reveal-img { opacity: 1; transform: scale(1); filter: grayscale(0%); }
+
+            @keyframes neonPulseMobile {
+                0% { box-shadow: 0 0 10px var(--box-color); }
+                50% { box-shadow: 0 0 25px var(--box-color); }
+                100% { box-shadow: 0 0 10px var(--box-color); }
+            }
+            .bento-item { animation: neonPulseMobile 3s infinite; }
+            .bento-item i { opacity: 0; } 
+            .bento-img { opacity: 0.8; transform: scale(1); filter: brightness(0.7); }
+
+            .hero-content { margin-top: 5vh; }
+            .typewriter-container { font-size: 1.7rem; min-height: 100px; margin-bottom: 1.5rem; }
+            .hero-concept h2 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+            .hero-concept p { font-size: 0.95rem; line-height: 1.5; }
+            .hero-concept { flex-direction: column; gap: 1.5rem; padding-top: 1.5rem; }
+
+            .history-block, .program-card { grid-template-columns: 1fr; gap: 2rem; margin-bottom: 4rem; }
             .bento-grid { grid-template-columns: 1fr; }
             .bento-item:nth-child(n) { grid-column: span 1; grid-row: span 1; }
-            footer { grid-template-columns: 1fr; } /* Stack footer cols on mobile */
-            .cursor { display: none; }
+            
+            .box-title { font-size: 1.3rem; white-space: normal; width: 90%; }
+            .history-text p, .program-content p { font-size: 0.95rem; line-height: 1.6; }
+
+            .mission-banner { padding: 4rem 4vw; margin-top: 2rem; }
+            .mission-typewriter-container { font-size: 1.1rem; min-height: 150px; line-height: 1.5; }
+
+            footer { grid-template-columns: 1fr; gap: 2.5rem; padding: 4rem 5vw 6rem 5vw; } 
+            .footer-logo { justify-content: center; }
+            .footer-emails, .contact-list li { text-align: center; align-items: center; justify-content: center; flex-direction: column;}
+            .footer-socials { justify-content: center; }
+            .map-container { height: 180px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Native Custom Cursor -->
+    <!-- Desktop Cursor Node -->
     <div class="cursor" id="cursor"><i class="fa-solid fa-earth-americas"></i></div>
 
-    <!-- Main Fixed Header -->
-    <header id="main-header">
+    <!-- =====================================
+         ECOSISTEMA ESCRITORIO (100% PROTEGIDO)
+         ===================================== -->
+    <header id="desktop-header">
         <a href="#inicio" class="header-logo-link hover-target">
             <img src="https://i.ibb.co/B5YNt2BZ/logomejoradosas.png" alt="Subir al Sur Logo" class="header-logo">
         </a>
     </header>
 
-    <!-- Right Sidebar Floating Controls -->
     <div class="floating-sidebar">
         <a href="https://www.instagram.com/fundacionses" class="floating-btn hover-target" target="_blank"><i class="fa-brands fa-instagram"></i></a>
         <a href="https://www.facebook.com/FundacionSes" class="floating-btn hover-target" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
         <a href="#" class="floating-btn floating-lang hover-target">EN</a>
     </div>
 
-    <!-- Navigation Coreography Items -->
-    <a href="#inicio" class="nav-text-btn btn-inicio hover-target"><span>Inicio</span></a>
-    <a href="#historia" class="nav-text-btn btn-historia hover-target"><span>Historia</span></a>
-    <a href="#programas" class="nav-text-btn btn-programas hover-target"><span>Programas</span></a>
-    <a href="#iniciativas" class="nav-text-btn btn-iniciativas hover-target"><span>Iniciativas</span></a>
-    <a href="#faq" class="nav-text-btn btn-faq hover-target"><span>FAQ</span></a>
-    <a href="#contacto" class="nav-text-btn btn-contacto hover-target"><span>Contacto</span></a>
+    <nav id="desktop-nav">
+        <a href="#inicio" class="nav-text-btn btn-inicio hover-target"><span>Inicio</span></a>
+        <a href="#historia" class="nav-text-btn btn-historia hover-target"><span>Historia</span></a>
+        <a href="#programas" class="nav-text-btn btn-programas hover-target"><span>Programas</span></a>
+        <a href="#iniciativas" class="nav-text-btn btn-iniciativas hover-target"><span>Iniciativas</span></a>
+        <a href="#faq" class="nav-text-btn btn-faq hover-target"><span>FAQ</span></a>
+        <a href="#contacto" class="nav-text-btn btn-contacto hover-target"><span>Contacto</span></a>
+    </nav>
 
-    <!-- Initial Hero View -->
+    <!-- =====================================
+         NUEVO ECOSISTEMA CELULAR (AISLADO)
+         ===================================== -->
+    <nav id="mobile-nav">
+        <!-- Primer botón transformado: Icono + SUBIR AL SUR -->
+        <a href="#inicio" class="mob-btn mob-btn-inicio">
+            <i class="fa fa-home"></i>
+            <span class="mob-label">SUBIR AL SUR</span>
+        </a>
+        <a href="#historia" class="mob-btn mob-btn-historia">
+            <i class="fa fa-book-open"></i>
+            <span class="mob-label">HISTORIA</span>
+        </a>
+        <a href="#programas" class="mob-btn mob-btn-programas">
+            <i class="fa fa-suitcase"></i>
+            <span class="mob-label">PROGRAMAS</span>
+        </a>
+        <a href="#iniciativas" class="mob-btn mob-btn-iniciativas">
+            <i class="fa fa-lightbulb"></i>
+            <span class="mob-label">INICIATIVAS</span>
+        </a>
+        <a href="#faq" class="mob-btn mob-btn-faq">
+            <i class="fa fa-question-circle"></i>
+            <span class="mob-label">FAQ</span>
+        </a>
+        <a href="#contacto" class="mob-btn mob-btn-contacto">
+            <i class="fa fa-envelope"></i>
+            <span class="mob-label">CONTACTO</span>
+        </a>
+    </nav>
+
+    <!-- HERO SECTION -->
     <section id="inicio" class="hero">
         <div class="hero-dynamic-bg" id="dynamicBg"></div>
         <div class="hero-content blur-reveal">
@@ -318,11 +437,10 @@
         </div>
     </section>
 
-    <!-- History / About Us -->
+    <!-- HISTORIA SECTION -->
     <section id="historia" class="history-section">
         <div class="section-watermark watermark-history">QUIÉNES SOMOS</div>
         
-        <!-- History Block 1 -->
         <div class="history-block">
             <div class="history-text blur-reveal">
                 <p>Allá por el 2011 Subir al Sur tuvo su segunda etapa de vida, naciendo como programa de voluntariado intercultural en Fundación SES, Argentina. Pero su primera etapa de vida se había iniciado en el 2005 gracias a la experiencia de una voluntaria argentina que viajó a Nepal a realizar un voluntariado junto a otras personas jóvenes de distintas latitudes.</p>
@@ -331,14 +449,13 @@
             <div class="box-container blur-reveal" style="--box-color: var(--sas-blue);">
                 <h3 class="box-title title-outside">El Origen: Nepal 2005</h3>
                 <h3 class="box-title title-inside">El Origen: Nepal 2005</h3>
-                <div class="color-reveal-wrapper hover-target">
+                <div class="color-reveal-wrapper hover-target scroll-trigger-item">
                     <i class="fa-solid fa-mountain-sun color-reveal-icon"></i>
                     <div class="color-reveal-img" style="background-image: url('https://i.ibb.co/TB1QswRP/yec-3.jpg');"></div>
                 </div>
             </div>
         </div>
         
-        <!-- History Block 2 -->
         <div class="history-block">
             <div class="history-text blur-reveal">
                 <p>Actualmente, Subir al Sur promueve la movilidad de juventudes, la participación comunitaria y el protagonismo juvenil a través de experiencias de voluntariado local-global en el marco de programas de intercambio.</p>
@@ -346,30 +463,27 @@
             <div class="box-container blur-reveal" style="--box-color: var(--sas-orange);">
                 <h3 class="box-title title-outside">Presente y Protagonismo</h3>
                 <h3 class="box-title title-inside">Presente y Protagonismo</h3>
-                <div class="color-reveal-wrapper hover-target">
+                <div class="color-reveal-wrapper hover-target scroll-trigger-item">
                     <i class="fa-solid fa-earth-americas color-reveal-icon"></i>
                     <div class="color-reveal-img" style="background-image: url('https://i.ibb.co/Kxbygfbr/National-Students-Demostration.jpg');"></div>
                 </div>
             </div>
         </div>
         
-        <!-- Mission Banner Sub-component -->
         <div class="mission-banner hover-target" id="missionBanner" style="--box-color: var(--sas-blue);">
             <h3 class="box-title title-outside">Nuestra Misión</h3>
             <h3 class="box-title title-inside">Nuestra Misión</h3>
-            
             <div class="mission-typewriter-container">
                 <span id="typed-text-mission"></span><span class="cursor-blink" id="mission-cursor" style="display:none;">|</span>
             </div>
         </div>
     </section>
 
-    <!-- Programs Listing -->
+    <!-- PROGRAMAS SECTION -->
     <section id="programas" class="programs-section">
         <div class="section-watermark watermark-programs">PROGRAMAS</div>
         <div class="programs-container">
             
-            <!-- Program 1 (Incoming) -->
             <div class="program-card blur-reveal">
                 <div class="program-content">
                     <p>Nuestros programas le dan la bienvenida a toda persona que esté dispuesta e interesada en conocer la cultura Argentina y su diversidad. Promovemos programas de larga duración (de 6 a 12 meses) pero también desarrollamos programas de 4 semanas a 5 meses.</p>
@@ -384,14 +498,13 @@
                 <div class="box-container hover-target" style="--box-color: var(--sas-green);">
                     <h3 class="box-title title-outside"><i class="fa-solid fa-map-location-dot"></i> Venir a Argentina</h3>
                     <h3 class="box-title title-inside"><i class="fa-solid fa-map-location-dot"></i> Venir a Argentina</h3>
-                    <div class="color-reveal-wrapper">
+                    <div class="color-reveal-wrapper scroll-trigger-item">
                         <i class="fa-solid fa-map-location-dot color-reveal-icon"></i>
                         <div class="color-reveal-img" style="background-image: url('https://i.ibb.co/zTvxYKBn/Afro-Descendent-Org-visit.jpg');"></div>
                     </div>
                 </div>
             </div>
             
-            <!-- Program 2 (Outgoing) -->
             <div class="program-card reverse blur-reveal">
                 <div class="program-content">
                     <p>Desde la Argentina queremos que cada vez haya más personas que viajen y vivan una experiencia de voluntariado en otro país.</p>
@@ -406,7 +519,7 @@
                 <div class="box-container hover-target" style="--box-color: var(--sas-pink);">
                     <h3 class="box-title title-outside"><i class="fa-solid fa-plane-departure"></i> Subir al Mundo</h3>
                     <h3 class="box-title title-inside"><i class="fa-solid fa-plane-departure"></i> Subir al Mundo</h3>
-                    <div class="color-reveal-wrapper">
+                    <div class="color-reveal-wrapper scroll-trigger-item">
                         <i class="fa-solid fa-plane-departure color-reveal-icon"></i>
                         <div class="color-reveal-img" style="background-image: url('https://i.ibb.co/xqDGRRxC/IMG-20260416-WA0047.jpg');"></div>
                     </div>
@@ -415,7 +528,7 @@
         </div>
     </section>
 
-    <!-- Bento Grid Initiatives -->
+    <!-- INICIATIVAS SECTION -->
     <section id="iniciativas" class="projects-section blur-reveal">
         <div class="section-watermark watermark-projects">INICIATIVAS</div>
         <div class="bento-grid" id="bentoContainer">
@@ -427,7 +540,7 @@
         </div>
     </section>
 
-    <!-- Infinite Scroll Partners Marquee -->
+    <!-- MARQUESINA SECTION -->
     <section class="marquee-section blur-reveal">
         <div class="marquee-container hover-target">
             <div class="marquee-content">
@@ -441,9 +554,8 @@
         </div>
     </section>
 
-    <!-- Main Footer Area -->
+    <!-- MEGA FOOTER -->
     <footer id="faq">
-        <!-- Col 1: FAQ -->
         <div class="footer-col blur-reveal">
             <h3 class="footer-title">Preguntas Frecuentes</h3>
             <div class="faq-container">
@@ -453,7 +565,6 @@
             <p style="color: rgba(255,255,255,0.9); font-size: 0.9rem; line-height: 1.6;">Ponete en contacto con nuestro equipo para conocer más sobre nuestros programas de voluntariado y resolver tus dudas.</p>
         </div>
         
-        <!-- Col 2: Brand & Contact Info -->
         <div class="footer-col blur-reveal" id="contacto">
             <div class="footer-logo">
                 <img src="https://i.ibb.co/B5YNt2BZ/logomejoradosas.png" alt="Subir al Sur">
@@ -465,7 +576,6 @@
             </div>
         </div>
 
-        <!-- Col 3: Map, Physical Address & Socials -->
         <div class="footer-col blur-reveal">
             <h3 class="footer-title">Ubicación</h3>
             
@@ -496,23 +606,29 @@
         </div>
     </footer>
 
-    <!-- Client-Side Logic -->
+    <!-- JAVASCRIPT LOGIC CORE -->
     <script>
-        // Custom Interaction Cursor Mapping
+        /* DOM Listeners Generales (PC) */
         const cursor = document.getElementById('cursor');
         document.addEventListener('mousemove', (e) => { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; });
         document.querySelectorAll('.hover-target, a, summary').forEach(target => { target.addEventListener('mouseenter', () => cursor.classList.add('hovered')); target.addEventListener('mouseleave', () => cursor.classList.remove('hovered')); });
 
-        // Dynamic Navigation Scroll Event Listener
         window.addEventListener('scroll', () => { 
             if(window.scrollY > 80) { document.body.classList.add('scrolled-nav'); } else { document.body.classList.remove('scrolled-nav'); }
         });
 
-        // Intersection Observer for Blur Reveal Effects
+        /* Scroll-Triggered Reveal (Móvil) */
+        const mobileScrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) { entry.target.classList.add('is-centered'); } else { entry.target.classList.remove('is-centered'); }
+            });
+        }, { rootMargin: "-40% 0px -40% 0px" });
+        document.querySelectorAll('.scroll-trigger-item').forEach(el => mobileScrollObserver.observe(el));
+
         const blurObserver = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('revealed'); blurObserver.unobserve(entry.target); } }); }, { threshold: 0.15 });
         document.querySelectorAll('.blur-reveal').forEach(el => blurObserver.observe(el));
 
-        // Reusable DOM Typewriter Engine
+        /* Typewriter Functions */
         function startTypewriter(elementId, htmlString, speed, callback) {
             const target = document.getElementById(elementId); let i = 0;
             function type() {
@@ -526,16 +642,13 @@
             type();
         }
 
-        // Hero Typewriter Initialization
         setTimeout(() => {
             const heroText = 'Somos <strong style="color: var(--sas-pink);">Subir al Sur</strong>, el programa de Voluntariado Intercultural de <strong style="color: var(--sas-orange);">Fundación SES</strong>.';
             startTypewriter('typed-text-hero', heroText, 40);
         }, 500);
 
-        // Mission Observer & Typewriter Instance
         let missionTyped = false;
         const missionText = "La misión del programa es <span style='color: var(--sas-orange); font-weight: 900;'>promover procesos de educación intercultural para la paz</span> mediante el <span style='color: var(--sas-pink); font-weight: 700;'>encuentro solidario</span> entre personas jóvenes de diversas regiones del mundo.<br><br><span style='font-size: 1.2rem; font-weight: 400;'>Su visión aspira a que las juventudes sean <strong style='color: var(--sas-green); font-weight: 900;'>protagonistas en la construcción de sociedades más justas y equitativas</strong>, desde el reconocimiento de la diversidad y el cuidado del mundo.</span>";
-        
         const missionObserver = new IntersectionObserver((entries) => {
             if(entries[0].isIntersecting && !missionTyped) {
                 missionTyped = true; const banner = document.getElementById('missionBanner'); banner.classList.add('zoomed-in');
@@ -545,7 +658,7 @@
         }, { threshold: 0.4 });
         missionObserver.observe(document.getElementById('missionBanner'));
 
-        // Background Hero Concept Floating Elements
+        /* Context Background Words */
         const words = ["VOLUNTARIADO", "INTERCULTURAL", "PAZ", "DIVERSIDAD", "JUVENTUDES", "CULTURA"];
         const bgContainer = document.getElementById('dynamicBg');
         function spawnWord() {
@@ -559,7 +672,6 @@
         }
         setInterval(spawnWord, 1500);
 
-        // Bento Grid Staggered Rendering
         const bentoObserver = new IntersectionObserver((entries) => {
             if(entries[0].isIntersecting) {
                 document.querySelectorAll('.bento-item').forEach((item, index) => { setTimeout(() => item.classList.add('visible'), index * 150); });
@@ -567,6 +679,46 @@
             }
         }, { threshold: 0.2 });
         bentoObserver.observe(document.getElementById('bentoContainer'));
+
+        /* 📱 LÓGICA DE INTERACCIÓN MÓVIL ESTRICTA (Tap 1 -> Anima | Tap 2 -> Navega) */
+        const mobileBtns = document.querySelectorAll('.mob-btn');
+        let activeMobBtn = null;
+
+        mobileBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                // Toque 1: Si no está abierto, bloquear navegación y expandir
+                if (!this.classList.contains('is-expanded')) {
+                    e.preventDefault(); 
+                    
+                    mobileBtns.forEach(b => b.classList.remove('is-expanded'));
+                    this.classList.add('is-expanded');
+                    activeMobBtn = this;
+                } 
+                // Toque 2: Si ya está abierto, dejamos que haga la navegación nativa sola y luego colapsamos
+                else {
+                    setTimeout(() => {
+                        this.classList.remove('is-expanded');
+                        activeMobBtn = null;
+                    }, 150);
+                }
+            });
+        });
+
+        // Click fuera del botón lo cierra
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.mob-btn') && activeMobBtn) {
+                activeMobBtn.classList.remove('is-expanded');
+                activeMobBtn = null;
+            }
+        });
+        
+        // Al hacer scroll, cerrar cualquier botón abierto para no estorbar
+        window.addEventListener('scroll', () => {
+            if(activeMobBtn) {
+                activeMobBtn.classList.remove('is-expanded');
+                activeMobBtn = null;
+            }
+        });
     </script>
 </body>
 </html>
